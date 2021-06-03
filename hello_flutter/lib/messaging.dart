@@ -9,8 +9,9 @@ class MessagingWidget extends StatefulWidget {
 
 class _MessagingWidgetState extends State<MessagingWidget> {
   late TextEditingController _controller;
-  String _title = "hello";
-  String _pseudoTitle = "helo";
+  String name = "Jayme";
+  String _msgBuffer = "";
+  final _messages = <String>[];
 
   @override
   void initState() {
@@ -24,24 +25,41 @@ class _MessagingWidgetState extends State<MessagingWidget> {
     super.dispose();
   }
 
+  Widget _buildMessages() {
+    return ListView.builder(
+      itemBuilder: (context, i) {
+        var msg = _messages[i];
+        var mine = msg.startsWith(name);
+        return ListTile(
+          title: Align(
+            alignment: mine ? Alignment.topRight : Alignment.topLeft,
+            child: Container(
+              padding: EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: mine ? Colors.grey[200] : Colors.blue[200],
+                borderRadius: const BorderRadius.all(
+                  const Radius.circular(10)
+                ),
+              ),
+              child: Text(msg)
+              ),
+          ),
+        );
+      },
+      itemCount: _messages.length,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(_title),
+          title: Text(name),
           backgroundColor: Colors.green[200],
         ),
         body: Column(
           children: [
-            Flexible(
-              child: ListView(
-                children: [
-                  ListTile(title: Text("0")),
-                  ListTile(title: Text("1")),
-                  ListTile(title: Text("2")),
-                ],
-              ),
-            ),
+            Flexible(child: _buildMessages()),
             Row(
               children: [
                 Flexible(
@@ -58,7 +76,7 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                       maxLines: 3,
                       controller: _controller,
                       onChanged: (String value) {
-                        _pseudoTitle = value;
+                        _msgBuffer = value;
                       },
                     ),
                   ),
@@ -66,9 +84,12 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                 FloatingActionButton(
                     onPressed: () {
                       setState(() {
-                        _title = _pseudoTitle;
-                        FocusScope.of(context).unfocus();
-                        _controller.clear();
+                        if (_msgBuffer != "") {
+                          _messages.add(_msgBuffer);
+                          FocusScope.of(context).unfocus();
+                          _controller.clear();
+                          _msgBuffer = "";
+                        }
                       });
                     },
                     backgroundColor: Colors.green[200],
