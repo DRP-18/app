@@ -12,10 +12,10 @@ class _MessagingWidgetState extends State<MessagingWidget> {
   final _controller = TextEditingController();
   final _scrollController = ScrollController();
   final channel = WebSocketChannel.connect(
-    Uri.parse('ws://echo.websocket.org'),
+    Uri.parse('wss://tutor-me-drp.herokuapp.com/textChat/chat'),
   );
 
-  String name = "Jayme";
+  String name = "Leonardo";
   String _msgBuffer = "";
   final _messages = <String>[];
 
@@ -97,6 +97,9 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                       if (_msgBuffer != "") {
                         var msg = name + " says: " + _msgBuffer;
                         channel.sink.add(msg);
+                        setState(() {
+                          _messages.add(msg);
+                        });
                         FocusScope.of(context).unfocus();
                         _controller.clear();
                         _scrollController.animateTo(
