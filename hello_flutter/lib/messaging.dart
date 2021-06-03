@@ -8,16 +8,12 @@ class MessagingWidget extends StatefulWidget {
 }
 
 class _MessagingWidgetState extends State<MessagingWidget> {
-  late TextEditingController _controller;
+  final _controller = TextEditingController();
+  final _scrollController = ScrollController();
+
   String name = "Jayme";
   String _msgBuffer = "";
   final _messages = <String>[];
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
-  }
 
   @override
   void dispose() {
@@ -25,8 +21,9 @@ class _MessagingWidgetState extends State<MessagingWidget> {
     super.dispose();
   }
 
-  Widget _buildMessages() {
+  Widget _buildMessages(ScrollController controller) {
     return ListView.builder(
+      controller: controller,
       itemBuilder: (context, i) {
         var msg = _messages[i];
         var mine = msg.startsWith(name);
@@ -34,15 +31,13 @@ class _MessagingWidgetState extends State<MessagingWidget> {
           title: Align(
             alignment: mine ? Alignment.topRight : Alignment.topLeft,
             child: Container(
-              padding: EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: mine ? Colors.grey[200] : Colors.blue[200],
-                borderRadius: const BorderRadius.all(
-                  const Radius.circular(10)
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: mine ? Colors.grey[200] : Colors.blue[200],
+                  borderRadius:
+                      const BorderRadius.all(const Radius.circular(10)),
                 ),
-              ),
-              child: Text(msg)
-              ),
+                child: Text(msg)),
           ),
         );
       },
@@ -54,12 +49,12 @@ class _MessagingWidgetState extends State<MessagingWidget> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(name),
+          title: Text("Chat"),
           backgroundColor: Colors.green[200],
         ),
         body: Column(
           children: [
-            Flexible(child: _buildMessages()),
+            Flexible(child: _buildMessages(_scrollController)),
             Row(
               children: [
                 Flexible(
@@ -85,9 +80,14 @@ class _MessagingWidgetState extends State<MessagingWidget> {
                     onPressed: () {
                       setState(() {
                         if (_msgBuffer != "") {
-                          _messages.add(_msgBuffer);
+                          _messages.add(name + " says: " + _msgBuffer);
                           FocusScope.of(context).unfocus();
                           _controller.clear();
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: Duration(milliseconds: 2000),
+                            curve: Curves.linear,
+                          );
                           _msgBuffer = "";
                         }
                       });
