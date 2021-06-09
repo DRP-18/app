@@ -38,10 +38,18 @@ class EventViewer extends StatelessWidget {
           return Column(
             children: [
               Expanded(
-                child: ListView(
-                  children: state.map((e) => 
-                    Text(e.content)
-                  ).toList(),
+                child: RefreshIndicator(
+                  child: ListView(
+                    children: state.map((e) => Text(e.content)).toList(),
+                  ),
+                  onRefresh: () {
+                    //On the off chance that someone ever looks at this again, please note that this is not the standard way
+                    //But also the standard way is another hack
+                    return () async {
+                      var state = await Refresh().handle(_calendarBloc.userID);
+                      _calendarBloc.emit(state);
+                    }();
+                  },
                 ),
               ),
               ElevatedButton(
