@@ -32,6 +32,8 @@ dependencies:
   http: ^0.13.3
   vibration: ^1.7.3
   flutter_vibrate: ^1.0.0
+  bloc: ^7.0.0
+  flutter_bloc: ^7.0.1
 
 dev_dependencies:
   flutter_test:

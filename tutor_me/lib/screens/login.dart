@@ -13,12 +13,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final textStyle = TextStyle(
-    color: mainTheme.accentColor,
-    fontSize: 30,
-    fontWeight: FontWeight.bold,
-  );
-
   String _username = "";
   bool _unsuccessfulLogin = false;
 
@@ -124,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } else {
       HapticFeedback.heavyImpact();
-      Navigator.push(
+      Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomeScreen(userId)));
     }
   }
