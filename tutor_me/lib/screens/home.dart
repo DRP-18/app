@@ -4,7 +4,9 @@ import 'package:tutor_me/bloc/calendar.dart';
 import 'package:tutor_me/theme/theme.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen(String userId, {Key? key}) : super(key: key);
+  final String userID;
+
+  const HomeScreen(this.userID, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +20,7 @@ class HomeScreen extends StatelessWidget {
       ),
       backgroundColor: mainTheme.primaryColor,
       body: BlocProvider<CalendarBloc>(
-        create: (context) => CalendarBloc(),
+        create: (context) => CalendarBloc(userID),
         child: EventViewer(),
       ),
     );

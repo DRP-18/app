@@ -6,13 +6,15 @@ import 'package:html/dom.dart';
 import 'package:intl/intl.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
-  CalendarBloc() : super([]);
+  final String userID;
+  
+  CalendarBloc(this.userID) : super([]);
 
   List<Task> get initialState => [];
 
   @override
   Stream<List<Task>> mapEventToState(CalendarEvent event) async* {
-    yield await event.handle();
+    yield await event.handle(userID);
   }
 }
 
@@ -31,10 +33,12 @@ class Task {
 }
 
 abstract class CalendarEvent {
-  Future<List<Task>> handle();
+  Future<List<Task>> handle(String userID);
 }
 
 class Add extends CalendarEvent {
+  final _format = DateFormat("yyyy-MM-ddThh:mm");
+  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
   late Task _task;
 
   Add(Task task) {
@@ -42,8 +46,23 @@ class Add extends CalendarEvent {
   }
 
   @override
-  Future<List<Task>> handle() async {
-    return Refresh().handle();
+  Future<List<Task>> handle(String userID) async {
+    print(_formatTime(_task.start));
+    await http.post(url, 
+    headers: {
+      "Cookie": "user_id=$userID",
+    },
+    body: {
+      "start_time": _formatTime(_task.start),
+      "end_time": _formatTime(_task.end),
+      "content": _task.content,
+      "tutee_id": _task.id.toString(),
+    });
+    return Refresh().handle(userID);
+  }
+
+  String _formatTime(DateTime time) {
+    return _format.format(time);
   }
 }
 
@@ -55,19 +74,18 @@ class Remove extends CalendarEvent {
   }
 
   @override
-  Future<List<Task>> handle() async {
-    return Refresh().handle();
+  Future<List<Task>> handle(String userID) async {
+    return Refresh().handle(userID);
   }
 }
 
 class Refresh extends CalendarEvent {
   final url = Uri.parse("https://tutor-drp.herokuapp.com/app");
-  // E MMM dd HH:mm:ss z yyyy
   final DateFormat format = DateFormat("E MMM dd HH:mm:ss yyyy");
 
   @override
-  Future<List<Task>> handle() async {
-    var resp = await http.get(url, headers: {"Cookie": "user_id=1"});
+  Future<List<Task>> handle(String userID) async {
+    var resp = await http.get(url, headers: {"Cookie": "user_id=$userID"});
     return _parseTable(parse(resp.bodyBytes));
   }
 
@@ -79,13 +97,7 @@ class Refresh extends CalendarEvent {
     var rows = body[0].getElementsByTagName("tr");
     rows = rows.sublist(
         0, rows.length - 1); //Don't include last row - has action buttons
-    return rows
-        .map(_parseRow)
-        .where((element) {
-          print(element);
-          return element.end.isAfter(DateTime.now());
-          })
-        .toList();
+    return rows.map(_parseRow).toList();
   }
 
   Task _parseRow(Element row) {
@@ -97,8 +109,7 @@ class Refresh extends CalendarEvent {
   }
 
   DateTime _parseTime(String timeString) {
-    return format
-        .parseUTC(timeString.replaceRange(20, 24, ""));
+    return format.parseUTC(timeString.replaceRange(20, 24, ""));
   }
 
   int _getId(Element form) {
