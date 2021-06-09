@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
         _unsuccessfulLogin = true;
       });
     } else {
-      HapticFeedback.heavyImpact();
+      await HapticFeedback.heavyImpact();
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomeScreen(userId)));
     }

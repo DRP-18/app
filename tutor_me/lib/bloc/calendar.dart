@@ -1,16 +1,18 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart' as http;
+import 'package:html/parser.dart' show parse;
+import 'package:html/dom.dart';
+import 'package:intl/intl.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
-  CalendarBloc(List<Task> initialState) : super(initialState);
+  CalendarBloc() : super([]);
 
-  final List<Task> _currentState = List.empty();
-
-  List<Task> get initialState => _currentState;
+  List<Task> get initialState => [];
 
   @override
   Stream<List<Task>> mapEventToState(CalendarEvent event) async* {
-      yield event.handle(_currentState);
+    yield await event.handle();
   }
 }
 
@@ -29,7 +31,7 @@ class Task {
 }
 
 abstract class CalendarEvent {
-  List<Task> handle(List<Task> state);
+  Future<List<Task>> handle();
 }
 
 class Add extends CalendarEvent {
@@ -40,14 +42,12 @@ class Add extends CalendarEvent {
   }
 
   @override
-  List<Task> handle(List<Task> state) {
-    state.add(_task);
-    return state;
+  Future<List<Task>> handle() async {
+    return Refresh().handle();
   }
 }
 
 class Remove extends CalendarEvent {
-
   late int _id;
 
   Remove(int id) {
@@ -55,15 +55,54 @@ class Remove extends CalendarEvent {
   }
 
   @override
-  List<Task> handle(List<Task> state) {
-    state.removeWhere((element) => element.id == _id);
-    return state;
+  Future<List<Task>> handle() async {
+    return Refresh().handle();
   }
 }
 
 class Refresh extends CalendarEvent {
+  final url = Uri.parse("https://tutor-drp.herokuapp.com/app");
+  // E MMM dd HH:mm:ss z yyyy
+  final DateFormat format = DateFormat("E MMM dd HH:mm:ss yyyy");
+
   @override
-  List<Task> handle(List<Task> state) {
-    return state;
+  Future<List<Task>> handle() async {
+    var resp = await http.get(url, headers: {"Cookie": "user_id=1"});
+    return _parseTable(parse(resp.bodyBytes));
+  }
+
+  List<Task> _parseTable(Document doc) {
+    var body = doc.getElementsByTagName("tbody");
+    if (body.isEmpty) {
+      return List.empty();
+    }
+    var rows = body[0].getElementsByTagName("tr");
+    rows = rows.sublist(
+        0, rows.length - 1); //Don't include last row - has action buttons
+    return rows
+        .map(_parseRow)
+        .where((element) {
+          print(element);
+          return element.end.isAfter(DateTime.now());
+          })
+        .toList();
+  }
+
+  Task _parseRow(Element row) {
+    var start = _parseTime(row.children[0].innerHtml);
+    var end = _parseTime(row.children[1].innerHtml);
+    var content = row.children[2].innerHtml;
+    var id = _getId(row.children[3]);
+    return Task(start, end, content, id);
+  }
+
+  DateTime _parseTime(String timeString) {
+    return format
+        .parseUTC(timeString.replaceRange(20, 24, ""));
+  }
+
+  int _getId(Element form) {
+    var button = form.getElementsByTagName("button")[0];
+    return int.parse(button.attributes["value"]!);
   }
 }
