@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' show parse;
-import 'package:html/dom.dart';
+import 'dart:convert';
 import 'package:intl/intl.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
@@ -47,7 +46,6 @@ class Add extends CalendarEvent {
 
   @override
   Future<List<Task>> handle(String userID) async {
-    print(_formatTime(_task.start));
     await http.post(url, 
     headers: {
       "Cookie": "user_id=$userID",
@@ -67,6 +65,7 @@ class Add extends CalendarEvent {
 }
 
 class Remove extends CalendarEvent {
+  final url = Uri.parse("http://192.168.1.118:8080/deletetask");
   late int _id;
 
   Remove(int id) {
@@ -75,45 +74,41 @@ class Remove extends CalendarEvent {
 
   @override
   Future<List<Task>> handle(String userID) async {
+    var resp = await http.post(url, 
+    headers: {
+      "Cookie": "user_id=$userID",
+    },
+    body: {
+      "task_id": "$_id",
+    });
     return Refresh().handle(userID);
   }
 }
 
 class Refresh extends CalendarEvent {
-  final url = Uri.parse("https://tutor-drp.herokuapp.com/app");
+  final url = Uri.parse("http://192.168.1.118:8080/viewtask");
+  // final url = Uri.parse("https://tutor-drp.herokuapp.com/app");
   final DateFormat format = DateFormat("E MMM dd HH:mm:ss yyyy");
 
   @override
   Future<List<Task>> handle(String userID) async {
     var resp = await http.get(url, headers: {"Cookie": "user_id=$userID"});
-    return _parseTable(parse(resp.bodyBytes));
+    var tasks = utf8.decode(resp.bodyBytes).split("&!!&").map(_parseTask).toList();
+    return tasks;
   }
 
-  List<Task> _parseTable(Document doc) {
-    var body = doc.getElementsByTagName("tbody");
-    if (body.isEmpty) {
-      return List.empty();
-    }
-    var rows = body[0].getElementsByTagName("tr");
-    rows = rows.sublist(
-        0, rows.length - 1); //Don't include last row - has action buttons
-    return rows.map(_parseRow).toList();
-  }
-
-  Task _parseRow(Element row) {
-    var start = _parseTime(row.children[0].innerHtml);
-    var end = _parseTime(row.children[1].innerHtml);
-    var content = row.children[2].innerHtml;
-    var id = _getId(row.children[3]);
-    return Task(start, end, content, id);
+  Task _parseTask(String raw) {
+    Map obj = json.decode(raw);
+    return Task(
+      _parseTime(obj["start_time"]!),
+      _parseTime(obj["end_time"]!),
+      obj["content"]!,
+      obj["id"]!,
+    );
   }
 
   DateTime _parseTime(String timeString) {
     return format.parseUTC(timeString.replaceRange(20, 24, ""));
   }
 
-  int _getId(Element form) {
-    var button = form.getElementsByTagName("button")[0];
-    return int.parse(button.attributes["value"]!);
-  }
 }
