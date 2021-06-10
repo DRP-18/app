@@ -1,6 +1,4 @@
 import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:bloc/bloc.dart';
 import 'package:http/http.dart' as http;
@@ -15,7 +13,7 @@ class TuteeBloc extends Bloc<TuteeEvent, List<Tutee>> {
   @override
   Stream<List<Tutee>> mapEventToState(TuteeEvent event) async* {
     yield await event.handle(userID);
-  } 
+  }
 }
 
 abstract class TuteeEvent {
@@ -23,7 +21,8 @@ abstract class TuteeEvent {
 }
 
 class Add extends TuteeEvent {
-  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtutee");
+  // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtutee");
+  final Uri url = Uri.parse("http://192.168.1.118:8080/addtutee");
   late String _tuteeName;
 
   Add(String tuteeName) {
@@ -42,8 +41,8 @@ class Add extends TuteeEvent {
 }
 
 class Refresh extends TuteeEvent {
-    // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/viewtutees");
-    final Uri url = Uri.parse("http://192.168.1.118:8080/viewtutees");
+  // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/viewtutees");
+  final Uri url = Uri.parse("http://192.168.1.118:8080/viewtutees");
 
   @override
   Future<List<Tutee>> handle(String userID) async {
@@ -66,7 +65,7 @@ class Refresh extends TuteeEvent {
       obj["name"]!,
       obj["id"]!,
     );
-  } 
+  }
 }
 
 class Tutee {

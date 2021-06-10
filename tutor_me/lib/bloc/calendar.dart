@@ -6,14 +6,15 @@ import 'package:intl/intl.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
   final String userID;
+  final String tuteeID;
 
-  CalendarBloc(this.userID) : super([]);
+  CalendarBloc(this.userID, this.tuteeID) : super([]);
 
   List<Task> get initialState => [];
 
   @override
   Stream<List<Task>> mapEventToState(CalendarEvent event) async* {
-    yield await event.handle(userID);
+    yield await event.handle(userID, tuteeID);
   }
 }
 
@@ -32,12 +33,13 @@ class Task {
 }
 
 abstract class CalendarEvent {
-  Future<List<Task>> handle(String userID);
+  Future<List<Task>> handle(String userID, String tuteeID);
 }
 
 class Add extends CalendarEvent {
   final _format = DateFormat("yyyy-MM-ddThh:mm");
-  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
+  // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
+  final Uri url = Uri.parse("http://192.168.1.118:8080/addtask");
   
   late Task _task;
   late String _tuteeName;
@@ -48,16 +50,17 @@ class Add extends CalendarEvent {
   }
 
   @override
-  Future<List<Task>> handle(String userID) async {
-    await http.post(url, headers: {
+  Future<List<Task>> handle(String userID, String tuteeID) async {
+    var resp = await http.post(url, headers: {
       "Cookie": "user_id=$userID",
     }, body: {
       "start_time": _formatTime(_task.start),
       "end_time": _formatTime(_task.end),
       "content": _task.content,
-      "tutee_id": _task.id.toString(),
+      "tutee_id": tuteeID,
     });
-    return Refresh(_tuteeName).handle(userID);
+    print(resp);
+    return Refresh(_tuteeName).handle(userID, tuteeID);
   }
 
   String _formatTime(DateTime time) {
@@ -76,13 +79,13 @@ class Remove extends CalendarEvent {
   }
 
   @override
-  Future<List<Task>> handle(String userID) async {
+  Future<List<Task>> handle(String userID, String tuteeID) async {
     await http.post(url, headers: {
       "Cookie": "user_id=$userID",
     }, body: {
       "task_id": "$_id",
     });
-    return Refresh(_tuteeName).handle(userID);
+    return Refresh(_tuteeName).handle(userID, tuteeID);
   }
 }
 
@@ -98,13 +101,14 @@ class Refresh extends CalendarEvent {
   final DateFormat format = DateFormat("E MMM dd HH:mm:ss yyyy");
 
   @override
-  Future<List<Task>> handle(String userID) async {
-    var resp = await http.post(url, headers: {"Cookie": "user_id=$userID${_tuteeName == null ? "" : ";tutee_name=$_tuteeName"}"});
+  Future<List<Task>> handle(String _, String tuteeID) async {
+    var resp = await http.post(url, headers: {"Cookie": "user_id=$tuteeID${_tuteeName == null ? "" : ";tutee_name=$_tuteeName"}"});
     if (resp.statusCode != 200) {
       return List.empty();
     }
     var rawTasks = json.decode(utf8.decode(resp.bodyBytes));
-    return _parseTasks(rawTasks);
+    var tasks = _parseTasks(rawTasks);
+    return tasks;
   }
 
   List<Task> _parseTasks(List raw) {

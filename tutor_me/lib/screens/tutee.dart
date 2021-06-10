@@ -1,36 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/calendar.dart';
-import 'package:tutor_me/bloc/tutees.dart';
 import 'package:tutor_me/components/event_viewer.dart';
-import 'package:tutor_me/components/tutee_viewer.dart';
 import 'package:tutor_me/components/users.dart';
 import 'package:tutor_me/theme/theme.dart';
 
-class HomeScreen extends StatelessWidget {
+class TuteeScreen extends StatelessWidget {
+  final String _name;
   final String _userID;
-  final UserType _uType;
+  final String _tuteeID;
 
-  const HomeScreen(this._userID, this._uType, {Key? key}) : super(key: key);
+  const TuteeScreen(this._userID, this._tuteeID, this._name, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "Home",
+          _name,
           style: textStyle.copyWith(color: mainTheme.primaryColor),
+          
         ),
         backgroundColor: mainTheme.accentColor,
+        foregroundColor: mainTheme.primaryColor,
       ),
       backgroundColor: mainTheme.primaryColor,
-      body: _uType == UserType.Tutee ? BlocProvider<CalendarBloc>(
-        create: (context) => CalendarBloc(_userID, _userID),
-        child: EventViewer(_uType, null, _userID),
-      ) : BlocProvider<TuteeBloc>(
-        create: (context) => TuteeBloc(_userID),
-        child: TuteeViewer(),
-      ),
+      body: BlocProvider<CalendarBloc>(
+        create: (context) => CalendarBloc(_userID, _tuteeID),
+        child: EventViewer(UserType.Tutor, _name, _userID),
+      )
     );
   }
 }
