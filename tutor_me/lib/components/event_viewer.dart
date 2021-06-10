@@ -42,7 +42,7 @@ class EventViewer extends StatelessWidget {
                     onPressed: () {
                       _calendarBloc.add(Add(
                           Task(DateTime.now(), DateTime.now().add(Duration(days: 1)),
-                              "Got any grapes?"),
+                              "Homework 1"),
                           _tuteeName!));
                     },
                     child: Text("Add")),
