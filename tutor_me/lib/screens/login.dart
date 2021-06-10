@@ -109,17 +109,23 @@ class _LoginScreenState extends State<LoginScreen> {
   //Makes a http request to the backend and then reads the user_id cookie
   void _login() async {
     var response = await http.post(
-        Uri.parse("https://tutor-drp.herokuapp.com/login"),
+        // Uri.parse("https://tutor-drp.herokuapp.com/login"),
+        Uri.parse("http://192.168.1.118:8080/login"),
         body: {"username": _username});
-    var userId = _parseCookies(response.headers["set-cookie"])["user_id"];
-    if (userId == null) {
+    var cookies = _parseCookies(response.headers["set-cookie"]);
+    var userId = cookies["user_id"];
+    var userType = cookies["user_type"];
+    if (userId == null || userType == null) {
       setState(() {
         _unsuccessfulLogin = true;
       });
     } else {
       await HapticFeedback.heavyImpact();
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => HomeScreen(userId)));
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => HomeScreen(userId,
+                  userType == "tutee" ? UserType.Tutee : UserType.Tutor)));
     }
   }
 
