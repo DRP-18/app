@@ -21,8 +21,7 @@ abstract class TuteeEvent {
 }
 
 class Add extends TuteeEvent {
-  // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtutee");
-  final Uri url = Uri.parse("http://192.168.1.118:8080/addtutee");
+  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtutee");
   late String _tuteeName;
 
   Add(String tuteeName) {
@@ -41,8 +40,7 @@ class Add extends TuteeEvent {
 }
 
 class Refresh extends TuteeEvent {
-  // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/viewtutees");
-  final Uri url = Uri.parse("http://192.168.1.118:8080/viewtutees");
+  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/viewtutees");
 
   @override
   Future<List<Tutee>> handle(String userID) async {

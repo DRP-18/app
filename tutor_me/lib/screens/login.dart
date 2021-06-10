@@ -110,8 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
   //Makes a http request to the backend and then reads the user_id cookie
   void _login() async {
     var response = await http.post(
-        // Uri.parse("https://tutor-drp.herokuapp.com/login"),
-        Uri.parse("http://192.168.1.118:8080/login"),
+        Uri.parse("https://tutor-drp.herokuapp.com/login"),
         body: {"username": _username});
     var cookies = _parseCookies(response.headers["set-cookie"]);
     var userId = cookies["user_id"];

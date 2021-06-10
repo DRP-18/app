@@ -38,8 +38,7 @@ abstract class CalendarEvent {
 
 class Add extends CalendarEvent {
   final _format = DateFormat("yyyy-MM-ddThh:mm");
-  // final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
-  final Uri url = Uri.parse("http://192.168.1.118:8080/addtask");
+  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
   
   late Task _task;
   late String _tuteeName;
@@ -69,7 +68,7 @@ class Add extends CalendarEvent {
 }
 
 class Remove extends CalendarEvent {
-  final url = Uri.parse("http://192.168.1.118:8080/deletetask");
+  final url = Uri.parse("https://tutor-drp.herokuapp.com/deletetask");
   late int _id;
   late String _tuteeName;
 
@@ -90,14 +89,13 @@ class Remove extends CalendarEvent {
 }
 
 class Refresh extends CalendarEvent {
-  final url = Uri.parse("http://192.168.1.118:8080/viewtask");
+  final url = Uri.parse("https://tutor-drp.herokuapp.com/viewtask");
   late String? _tuteeName;
 
   Refresh(String? tuteeName) {
     this._tuteeName = tuteeName;
   }
 
-  // final url = Uri.parse("https://tutor-drp.herokuapp.com/viewtask");
   final DateFormat format = DateFormat("E MMM dd HH:mm:ss yyyy");
 
   @override
