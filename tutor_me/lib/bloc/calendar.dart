@@ -100,6 +100,9 @@ class Refresh extends CalendarEvent {
   @override
   Future<List<Task>> handle(String userID) async {
     var resp = await http.post(url, headers: {"Cookie": "user_id=$userID${_tuteeName == null ? "" : ";tutee_name=$_tuteeName"}"});
+    if (resp.statusCode != 200) {
+      return List.empty();
+    }
     var rawTasks = json.decode(utf8.decode(resp.bodyBytes));
     return _parseTasks(rawTasks);
   }
