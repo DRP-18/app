@@ -6,10 +6,10 @@ import 'package:tutor_me/theme/theme.dart';
 enum UserType { Tutee, Tutor }
 
 class HomeScreen extends StatelessWidget {
-  final String userID;
-  final UserType uType;
+  final String _userID;
+  final UserType _uType;
 
-  const HomeScreen(this.userID, this.uType, {Key? key}) : super(key: key);
+  const HomeScreen(this._userID, this._uType, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,16 +23,17 @@ class HomeScreen extends StatelessWidget {
       ),
       backgroundColor: mainTheme.primaryColor,
       body: BlocProvider<CalendarBloc>(
-        create: (context) => CalendarBloc(userID),
-        child: EventViewer(uType),
+        create: (context) => CalendarBloc(_userID),
+        child: EventViewer(_uType, null),
       ),
     );
   }
 }
 
 class EventViewer extends StatelessWidget {
-  final UserType uType;
-  const EventViewer(this.uType);
+  final UserType _uType;
+  final String? _tuteeName;
+  const EventViewer(this._uType, this._tuteeName);
 
   @override
   Widget build(BuildContext context) {
@@ -46,22 +47,26 @@ class EventViewer extends StatelessWidget {
               Expanded(
                 child: RefreshIndicator(
                   child: ListView(
-                    children: state.map((e) => TuteeCard(e)).toList(),
+                    children: state
+                        .where((e) => e.end.isAfter(DateTime.now()))
+                        .map((e) => TuteeCard(e))
+                        .toList(),
                   ),
                   onRefresh: () {
                     //On the off chance that someone ever looks at this again, please note that this is not the standard way
                     //But also the standard way is another hack
                     return () async {
-                      var state = await Refresh().handle(_calendarBloc.userID);
+                      var state = await Refresh(null).handle(_calendarBloc.userID);
                       _calendarBloc.emit(state);
                     }();
                   },
                 ),
               ),
-              ElevatedButton(
-                  onPressed: () => _calendarBloc.add(Add(Task(
-                      DateTime.now(), DateTime.now(), "Got any grapes?", 1))),
-                  child: Text("Add")),
+              if (_uType == UserType.Tutor)
+                ElevatedButton(
+                    onPressed: () => _calendarBloc.add(Add(Task(
+                        DateTime.now(), DateTime.now(), "Got any grapes?", 1), _tuteeName!)),
+                    child: Text("Add")),
             ],
           );
         },
@@ -77,17 +82,12 @@ class TuteeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CalendarBloc _calendarBloc = BlocProvider.of(context);
     return Card(
         child: ListTile(
       title: Text(_task.content),
       subtitle: Text("${_formatTime()}"),
-      trailing: IconButton(
-          onPressed: () => _calendarBloc.add(Remove(_task.id!)),
-          icon: Icon(Icons.cancel_outlined)),
     ));
   }
-
 
   //Will return the time until the due time, formatted in the following ways:
   //1. n days m hours if more than 1 day is needed - hours omitted if 0
@@ -97,9 +97,13 @@ class TuteeCard extends StatelessWidget {
   String _formatTime() {
     var difference = _task.end.difference(DateTime.now());
     if (difference.inDays > 0) {
-      return "Due in: " + _formatQuantity("day", difference.inDays) + _formatQuantity("hour", difference.inHours % 24);
+      return "Due in: " +
+          _formatQuantity("day", difference.inDays) +
+          _formatQuantity("hour", difference.inHours % 24);
     } else if (difference.inHours > 0) {
-      return "Due in: " + _formatQuantity("hour", difference.inHours) + _formatQuantity("minute", difference.inMinutes % 60);
+      return "Due in: " +
+          _formatQuantity("hour", difference.inHours) +
+          _formatQuantity("minute", difference.inMinutes % 60);
     } else if (difference.inMinutes > 0) {
       return "Due in: " + _formatQuantity("minute", difference.inMinutes);
     }
@@ -107,6 +111,24 @@ class TuteeCard extends StatelessWidget {
   }
 
   String _formatQuantity(String name, int value) {
-    return value != 0 ? "$value $name${value > 1 ? 's ': ' '}" : "";
+    return value != 0 ? "$value $name${value > 1 ? 's ' : ' '}" : "";
+  }
+}
+
+class TutorCard extends StatelessWidget {
+  final Task _task;
+  final String _tuteeName;
+  const TutorCard(this._task, this._tuteeName ,{Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final CalendarBloc _calendarBloc = BlocProvider.of(context);
+    return Card(
+        child: ListTile(
+      title: Text(_task.content),
+      trailing: IconButton(
+          onPressed: () => _calendarBloc.add(Remove(_task.id!, _tuteeName)),
+          icon: Icon(Icons.cancel_outlined)),
+    ));
   }
 }
