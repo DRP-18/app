@@ -24,8 +24,17 @@ class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
         var rem = event as Remove;
         yield this.state.where((element) => element.id != rem._id).toList();
         break;
+      case Done:
+        var done = event as Done;
+        yield this
+            .state
+            .map((task) => task.id == done._id
+                ? Task(task.start, task.end, task.content, true, task.id)
+                : task)
+            .toList();
+        break;
       default:
-       break;
+        break;
     }
     yield await event.handle(userID, tuteeID);
   }
@@ -36,12 +45,14 @@ class Task {
   late DateTime start;
   late DateTime end;
   late String content;
+  late bool done;
 
-  Task(DateTime start, DateTime end, String content, [int? id]) {
+  Task(DateTime start, DateTime end, String content, bool done, [int? id]) {
     this.start = start;
     this.end = end;
     this.content = content;
     this.id = id;
+    this.done = done;
   }
 }
 
@@ -52,7 +63,7 @@ abstract class CalendarEvent {
 class Add extends CalendarEvent {
   final _format = DateFormat("yyyy-MM-ddThh:mm");
   final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
-  
+
   late Task _task;
   late String _tuteeName;
 
@@ -63,7 +74,7 @@ class Add extends CalendarEvent {
 
   @override
   Future<List<Task>> handle(String userID, String tuteeID) async {
-    var resp = await http.post(url, headers: {
+    await http.post(url, headers: {
       "Cookie": "user_id=$userID",
     }, body: {
       "start_time": _formatTime(_task.start),
@@ -71,7 +82,6 @@ class Add extends CalendarEvent {
       "content": _task.content,
       "tutee_id": tuteeID,
     });
-    print(resp);
     return Refresh(_tuteeName).handle(userID, tuteeID);
   }
 
@@ -102,22 +112,25 @@ class Remove extends CalendarEvent {
 }
 
 class Refresh extends CalendarEvent {
-  final url = Uri.parse("https://tutor-drp.herokuapp.com/viewtask");
-  late String? _tuteeName;
+  final url = Uri.parse("https://tutor-drp.herokuapp.com/tuteetasks");
+  late String? _tuteeName; //Needed to know which tutee to get data for
 
   Refresh(String? tuteeName) {
     this._tuteeName = tuteeName;
   }
 
-  final DateFormat format = DateFormat("E MMM dd HH:mm:ss yyyy");
+  final DateFormat format = DateFormat("Y");
 
   @override
   Future<List<Task>> handle(String _, String tuteeID) async {
-    var resp = await http.post(url, headers: {"Cookie": "user_id=$tuteeID${_tuteeName == null ? "" : ";tutee_name=$_tuteeName"}"});
+    var resp = await http.get(url, headers: {
+      "Cookie":
+          "user_id=$tuteeID${_tuteeName == null ? "" : ";tutee_name=$_tuteeName"}"
+    });
     if (resp.statusCode != 200) {
       return List.empty();
     }
-    var rawTasks = json.decode(utf8.decode(resp.bodyBytes));
+    var rawTasks = json.decode(resp.body);
     var tasks = _parseTasks(rawTasks);
     return tasks;
   }
@@ -128,14 +141,33 @@ class Refresh extends CalendarEvent {
 
   Task _parseTask(Map obj) {
     return Task(
-      _parseTime(obj["start_time"]!),
-      _parseTime(obj["end_time"]!),
+      _parseTime(obj["startTime"]!),
+      _parseTime(obj["endTime"]!),
       obj["content"]!,
+      obj["done"]!,
       obj["id"]!,
     );
   }
 
   DateTime _parseTime(String timeString) {
-    return format.parseUTC(timeString.replaceRange(20, 24, ""));
+    return DateTime.parse(timeString);
+  }
+}
+
+class Done extends CalendarEvent {
+  final url = Uri.parse("https://tutor-drp.herokuapp.com/donetask");
+  late int _id;
+
+  Done(int id) {
+    this._id = id;
+  }
+
+  Future<List<Task>> handle(String userID, String tuteeID) async {
+    await http.post(url, headers: {
+      "Cookie": "user_id=$userID",
+    }, body: {
+      "task_id": "$_id",
+    });
+    return Refresh("Mika").handle(userID, tuteeID);
   }
 }

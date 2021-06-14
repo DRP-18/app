@@ -23,7 +23,9 @@ class EventViewer extends StatelessWidget {
                   child: ListView(
                     children: state
                         .where((e) => e.end.isAfter(DateTime.now()))
-                        .map((e) => _uType == UserType.Tutee ? TuteeCard(e) : TutorCard(e, _tuteeName!))
+                        .map((e) => _uType == UserType.Tutee
+                            ? TuteeCard(e)
+                            : TutorCard(e, _tuteeName!))
                         .toList(),
                   ),
                   onRefresh: () {
@@ -41,8 +43,11 @@ class EventViewer extends StatelessWidget {
                 ElevatedButton(
                     onPressed: () {
                       _calendarBloc.add(Add(
-                          Task(DateTime.now(), DateTime.now().add(Duration(days: 1)),
-                              "Homework 1"),
+                          Task(
+                              DateTime.now(),
+                              DateTime.now().add(Duration(days: 1)),
+                              "Homework 1",
+                              false),
                           _tuteeName!));
                     },
                     child: Text("Add")),

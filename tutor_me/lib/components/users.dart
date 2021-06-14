@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/calendar.dart';
 
-
 enum UserType { Tutee, Tutor }
-
 
 class TuteeCard extends StatelessWidget {
   final Task _task;
@@ -13,11 +11,25 @@ class TuteeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final CalendarBloc _calendarBloc = BlocProvider.of(context);
     return Card(
-        child: ListTile(
-      title: Text(_task.content),
-      subtitle: Text("${_formatTime()}"),
-    ));
+      child: ListTile(
+        title: Text(_task.content),
+        subtitle: Text("${_formatTime()}"),
+        trailing: IconButton(
+          onPressed: () {
+            if (!_task.done) {
+              _calendarBloc.add(Done(_task.id!.toInt()));
+            }
+          },
+          icon: Icon(
+              _task.done
+                  ? Icons.check_box_outlined
+                  : Icons.check_box_outline_blank_rounded,
+              color: _task.done ? Colors.green : Colors.red),
+        ),
+      ),
+    );
   }
 
   //Will return the time until the due time, formatted in the following ways:
@@ -49,7 +61,7 @@ class TuteeCard extends StatelessWidget {
 class TutorCard extends StatelessWidget {
   final Task _task;
   final String _tuteeName;
-  const TutorCard(this._task, this._tuteeName ,{Key? key}) : super(key: key);
+  const TutorCard(this._task, this._tuteeName, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
