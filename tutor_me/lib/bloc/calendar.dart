@@ -2,6 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'package:intl/intl.dart';
 
 class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
@@ -14,6 +15,18 @@ class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
 
   @override
   Stream<List<Task>> mapEventToState(CalendarEvent event) async* {
+    switch (event.runtimeType) {
+      case Add:
+        var add = event as Add;
+        yield this.state + [add._task];
+        break;
+      case Remove:
+        var rem = event as Remove;
+        yield this.state.where((element) => element.id != rem._id).toList();
+        break;
+      default:
+       break;
+    }
     yield await event.handle(userID, tuteeID);
   }
 }
