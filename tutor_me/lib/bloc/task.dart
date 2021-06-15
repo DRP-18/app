@@ -5,16 +5,16 @@ import 'dart:convert';
 import 'dart:async';
 import 'package:intl/intl.dart';
 
-class CalendarBloc extends Bloc<CalendarEvent, List<Task>> {
+class TaskBloc extends Bloc<TaskEvent, List<Task>> {
   final String userID;
   final String tuteeID;
 
-  CalendarBloc(this.userID, this.tuteeID) : super([]);
+  TaskBloc(this.userID, this.tuteeID) : super([]);
 
   List<Task> get initialState => [];
 
   @override
-  Stream<List<Task>> mapEventToState(CalendarEvent event) async* {
+  Stream<List<Task>> mapEventToState(TaskEvent event) async* {
     switch (event.runtimeType) {
       case Add:
         var add = event as Add;
@@ -56,11 +56,11 @@ class Task {
   }
 }
 
-abstract class CalendarEvent {
+abstract class TaskEvent {
   Future<List<Task>> handle(String userID, String tuteeID);
 }
 
-class Add extends CalendarEvent {
+class Add extends TaskEvent {
   final _format = DateFormat("yyyy-MM-ddThh:mm");
   final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
 
@@ -90,7 +90,7 @@ class Add extends CalendarEvent {
   }
 }
 
-class Remove extends CalendarEvent {
+class Remove extends TaskEvent {
   final url = Uri.parse("https://tutor-drp.herokuapp.com/deletetask");
   late int _id;
   late String _tuteeName;
@@ -111,7 +111,7 @@ class Remove extends CalendarEvent {
   }
 }
 
-class Refresh extends CalendarEvent {
+class Refresh extends TaskEvent {
   final url = Uri.parse("https://tutor-drp.herokuapp.com/tuteetasks");
   late String? _tuteeName; //Needed to know which tutee to get data for
 
@@ -154,7 +154,7 @@ class Refresh extends CalendarEvent {
   }
 }
 
-class Done extends CalendarEvent {
+class Done extends TaskEvent {
   final url = Uri.parse("https://tutor-drp.herokuapp.com/donetask");
   late int _id;
 

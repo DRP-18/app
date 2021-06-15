@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tutor_me/bloc/calendar.dart';
+import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/bloc/tutees.dart' as tutees;
 import 'package:tutor_me/components/event_viewer.dart';
 import 'package:tutor_me/components/tutee_viewer.dart';
@@ -30,8 +30,8 @@ class HomeScreen extends StatelessWidget {
       ),
       backgroundColor: mainTheme.primaryColor,
       body: _uType == UserType.Tutee
-          ? BlocProvider<CalendarBloc>(
-              create: (context) => CalendarBloc(_userID, _userID)..add(Refresh(null)),
+          ? BlocProvider<TaskBloc>(
+              create: (context) => TaskBloc(_userID, _userID)..add(Refresh(null)),
               child: EventViewer(_uType, null, _userID),
             )
           : BlocProvider<tutees.TuteeBloc>(

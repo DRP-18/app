@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tutor_me/bloc/calendar.dart';
+import 'package:tutor_me/bloc/task.dart';
 
 enum UserType { Tutee, Tutor }
 
@@ -11,7 +11,7 @@ class TuteeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CalendarBloc _calendarBloc = BlocProvider.of(context);
+    final TaskBloc _calendarBloc = BlocProvider.of(context);
     return Card(
       child: ListTile(
         title: Text(_task.content),
@@ -65,7 +65,7 @@ class TutorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CalendarBloc _calendarBloc = BlocProvider.of(context);
+    final TaskBloc _calendarBloc = BlocProvider.of(context);
     return Card(
         child: ListTile(
       title: Text(_task.content),

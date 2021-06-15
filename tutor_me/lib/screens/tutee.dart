@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tutor_me/bloc/calendar.dart';
+import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/components/event_viewer.dart';
 import 'package:tutor_me/components/users.dart';
 import 'package:tutor_me/theme/theme.dart';
@@ -25,8 +25,8 @@ class TuteeScreen extends StatelessWidget {
         foregroundColor: mainTheme.primaryColor,
       ),
       backgroundColor: mainTheme.primaryColor,
-      body: BlocProvider<CalendarBloc>(
-        create: (context) => CalendarBloc(_userID, _tuteeID)..add(Refresh(_name)),
+      body: BlocProvider<TaskBloc>(
+        create: (context) => TaskBloc(_userID, _tuteeID)..add(Refresh(_name)),
         child: EventViewer(UserType.Tutor, _name, _userID),
       )
     );

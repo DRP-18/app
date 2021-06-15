@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tutor_me/bloc/calendar.dart';
+import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/components/users.dart';
 
 class EventViewer extends StatelessWidget {
@@ -11,7 +11,7 @@ class EventViewer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CalendarBloc _calendarBloc = BlocProvider.of(context);
+    final TaskBloc _calendarBloc = BlocProvider.of(context);
     return Container(
       child: BlocBuilder(
         bloc: _calendarBloc,
