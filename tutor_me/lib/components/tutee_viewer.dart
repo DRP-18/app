@@ -5,7 +5,6 @@ import 'package:tutor_me/screens/tutee.dart';
 import 'package:tutor_me/theme/theme.dart';
 
 class TuteeViewer extends StatefulWidget {
-
   TuteeViewer({Key? key}) : super(key: key);
 
   @override
@@ -38,8 +37,10 @@ class _TuteeViewerState extends State<TuteeViewer> {
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                TuteeScreen(_tuteeBloc.userID, e.id.toString(), e.name)));
+                                            builder: (context) => TuteeScreen(
+                                                _tuteeBloc.userID,
+                                                e.id.toString(),
+                                                e.name)));
                                   },
                                   icon: Icon(Icons.person)),
                             )))
@@ -55,39 +56,47 @@ class _TuteeViewerState extends State<TuteeViewer> {
                   },
                 ),
               ),
-              Container(
-                width: 300,
-                child: TextField(
-                  maxLines: 1,
-                  textAlign: TextAlign.center,
-                  style: textStyle.copyWith(
-                      fontSize: 20, color: mainTheme.primaryColor),
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50.0),
-                      borderSide: BorderSide(color: mainTheme.primaryColor),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(50.0),
-                      borderSide: BorderSide(color: mainTheme.primaryColor),
-                    ),
-                    fillColor: mainTheme.accentColor,
-                    filled: true,
-                    hintText: "Add tutee",
-                    hintStyle: textStyle.copyWith(
-                        fontSize: 20, color: mainTheme.primaryColor),
-                  ),
-                  onChanged: (value) {
-                    _tuteeName = value;
-                  },
-                ),
-              ),
               IconButton(
                 onPressed: () {
-                  _tuteeBloc.add(Add(_tuteeName));
-                  setState(() {
-                    _tuteeName = "";
-                  });
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          content: Row(
+                            children: [
+                              Container(
+                                width: 200,
+                                child: TextField(
+                                  maxLines: 1,
+                                  textAlign: TextAlign.center,
+                                  style: textStyle.copyWith(
+                                      fontSize: 20,
+                                      color: mainTheme.primaryColor),
+                                  decoration: InputDecoration(
+                                    fillColor: mainTheme.accentColor,
+                                    filled: true,
+                                    hintText: "Tutee Name",
+                                    hintStyle: textStyle.copyWith(
+                                        fontSize: 20,
+                                        color: mainTheme.primaryColor),
+                                  ),
+                                  onChanged: (value) {
+                                    _tuteeName = value;
+                                  },
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    _tuteeBloc.add(Add(_tuteeName));
+                                    setState(() {
+                                      _tuteeName = "";
+                                    });
+                                  },
+                                  icon: Icon(Icons.search))
+                            ],
+                          ),
+                        );
+                      });
                 },
                 icon: Icon(Icons.person_add),
               )
