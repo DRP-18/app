@@ -14,7 +14,8 @@ class Session {
   const Session(this.tutor, this.tutees, this.start, this.duration);
 
   static Session fromJson(Map obj) {
-    return Session(obj["tutor"]!, obj["tutees"]!, obj["start"]!, obj["duration"]!);
+    return Session(
+        obj["tutor"]!, obj["tutees"]!, obj["start"]!, obj["duration"]!);
   }
 
   String toJson() {
@@ -46,13 +47,11 @@ class RemoveSession extends DataEvent<Session> {
     await http.post(url, body: _session.toJson());
     return RefreshSessions().handle(fields);
   }
-
-  
 }
 
 class RefreshSessions extends Refresh<Session> {
   final url = Uri.parse("https://tutor-drp.herokuapp.com/getSessions");
-  
+
   RefreshSessions() : super((e) => Session.fromJson(e));
 
   @override

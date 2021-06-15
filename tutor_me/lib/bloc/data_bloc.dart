@@ -15,9 +15,8 @@ abstract class DataBloc<T> extends Bloc<DataEvent<T>, List<T>> {
   List<T> get initialState => [];
 
   @override
-  Stream<List<T>> mapEventToState(DataEvent event) async* {
-    var fut = await event.handle(_fields);
-    yield fut.map((e) => e as T).toList();
+  Stream<List<T>> mapEventToState(DataEvent<T> event) async* {
+    yield await event.handle(_fields);
   }
 }
 
