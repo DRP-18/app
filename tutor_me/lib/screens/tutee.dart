@@ -26,7 +26,7 @@ class TuteeScreen extends StatelessWidget {
       ),
       backgroundColor: mainTheme.primaryColor,
       body: BlocProvider<CalendarBloc>(
-        create: (context) => CalendarBloc(_userID, _tuteeID),
+        create: (context) => CalendarBloc(_userID, _tuteeID)..add(Refresh(_name)),
         child: EventViewer(UserType.Tutor, _name, _userID),
       )
     );

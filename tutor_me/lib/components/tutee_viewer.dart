@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:tutor_me/bloc/calendar.dart' as calendar;
 import 'package:tutor_me/bloc/tutees.dart';
 import 'package:tutor_me/screens/tutee.dart';
 import 'package:tutor_me/theme/theme.dart';
@@ -74,7 +73,7 @@ class _TuteeViewerState extends State<TuteeViewer> {
                     ),
                     fillColor: mainTheme.accentColor,
                     filled: true,
-                    hintText: "USERNAME",
+                    hintText: "Add tutee",
                     hintStyle: textStyle.copyWith(
                         fontSize: 20, color: mainTheme.primaryColor),
                   ),
