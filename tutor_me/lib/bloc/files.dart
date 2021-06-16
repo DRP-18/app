@@ -8,6 +8,11 @@ class FileBloc extends DataBloc<File> {
   final String _taskID;
 
   FileBloc(this._taskID) : super([_taskID]);
+
+  @override
+  Stream<List<File>> mapEventToState(DataEvent<File> event) async* {
+    yield await event.handle([_taskID]);
+  }
 }
 
 class File {
@@ -20,25 +25,25 @@ class File {
 
   static File fromJson(Map obj) {
     final _format = DateFormat("yyyy-MM-ddThh:mm");
-    return File(
-      obj["filename"]!,
-      obj["uploader"]!["name"]!,
-      _format.parse(obj["uploadTime"]!),
-      obj["id"]!
-    );
+    return File(obj["filename"]!, obj["uploader"]!["name"]!,
+        _format.parse(obj["uploadTime"]!), obj["id"]!);
   }
 }
-
 
 class RefreshFile extends Refresh<File> {
   final _url = "https://tutor-drp.herokuapp.com/task/";
 
-  RefreshFile() : super((v) => File.fromJson(v));
+  RefreshFile() : super();
 
   @override
   Future<http.Response> request(List<String> fields) {
     final _taskID = fields[0];
     final url = Uri.parse(_url + _taskID);
     return http.get(url);
+  }
+
+  @override
+  File dataConstructor(Map obj) {
+    return File.fromJson(obj);
   }
 }

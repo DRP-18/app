@@ -8,16 +8,14 @@ import 'package:http/http.dart';
 //DataBloc represents a list of potentially refreshable data hosted on a server
 //The data will be transferred as json
 abstract class DataBloc<T> extends Bloc<DataEvent<T>, List<T>> {
-  final List<String> _fields;
+  final List<String> fields;
 
-  DataBloc(this._fields) : super([]);
+  DataBloc(this.fields) : super([]);
 
   List<T> get initialState => [];
 
   @override
-  Stream<List<T>> mapEventToState(DataEvent<T> event) async* {
-    yield await event.handle(_fields);
-  }
+  Stream<List<T>> mapEventToState(DataEvent<T> event);
 }
 
 abstract class DataEvent<T> {
@@ -25,9 +23,9 @@ abstract class DataEvent<T> {
 }
 
 abstract class Refresh<T> extends DataEvent<T> {
-  final Function _dataConstructor;
+  T dataConstructor(Map obj);
 
-  Refresh(this._dataConstructor);
+  Refresh();
 
   Future<Response> request(List<String> fields);
 
@@ -38,6 +36,6 @@ abstract class Refresh<T> extends DataEvent<T> {
       return List.empty();
     }
     var rawData = json.decode(resp.body);
-    return rawData.map((e) => _dataConstructor(e as Map)).toList();
+    return rawData.map<T>((e) => dataConstructor(e as Map)).toList();
   }
 }

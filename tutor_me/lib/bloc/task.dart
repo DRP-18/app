@@ -4,10 +4,10 @@ import 'package:intl/intl.dart';
 import 'data_bloc.dart';
 
 class TaskBloc extends DataBloc<Task> {
-  final String _userID;
-  final String _tuteeID;
+  final String userID;
+  final String tuteeID;
 
-  TaskBloc(this._userID, this._tuteeID) : super([_userID, _tuteeID]);
+  TaskBloc(this.userID, this.tuteeID) : super([userID, tuteeID]);
 
   @override
   Stream<List<Task>> mapEventToState(DataEvent<Task> event) async* {
@@ -32,7 +32,7 @@ class TaskBloc extends DataBloc<Task> {
       default:
         break;
     }
-    super.mapEventToState(event);
+    yield await event.handle([userID, tuteeID]);
   }
 }
 
@@ -66,7 +66,7 @@ class RefreshTask extends Refresh<Task> {
   final _url = Uri.parse("https://tutor-drp.herokuapp.com/tuteetasks");
   final String? _tuteeName;
 
-  RefreshTask(this._tuteeName) : super((v) => Task.fromJson(v));
+  RefreshTask(this._tuteeName) : super();
 
   @override
   Future<http.Response> request(List<String> fields) {
@@ -76,6 +76,9 @@ class RefreshTask extends Refresh<Task> {
           "user_id=$tuteeID${_tuteeName == null ? "" : ";tutee_name=$_tuteeName"}"
     });
   }
+
+  @override
+  Task dataConstructor(Map obj) => Task.fromJson(obj);
 }
 
 class DoneTask extends DataEvent<Task> {

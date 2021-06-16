@@ -3,6 +3,11 @@ import 'data_bloc.dart';
 
 class SessionBloc extends DataBloc<Session> {
   SessionBloc(List<String> fields) : super(fields);
+
+  @override
+  Stream<List<Session>> mapEventToState(DataEvent<Session> event) async* {
+    yield await event.handle(fields);
+  }
 }
 
 class Session {
@@ -52,7 +57,7 @@ class RemoveSession extends DataEvent<Session> {
 class RefreshSessions extends Refresh<Session> {
   final url = Uri.parse("https://tutor-drp.herokuapp.com/getSessions");
 
-  RefreshSessions() : super((e) => Session.fromJson(e));
+  RefreshSessions() : super();
 
   @override
   Future<http.Response> request(List<String> fields) {
@@ -60,4 +65,7 @@ class RefreshSessions extends Refresh<Session> {
       "tutor": fields[0],
     });
   }
+
+  @override
+  Session dataConstructor(Map obj) => Session.fromJson(obj);
 }
