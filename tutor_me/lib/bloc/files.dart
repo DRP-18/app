@@ -19,13 +19,9 @@ class FileBloc extends DataBloc<UserFile> {
 }
 
 class UserFile {
-  // ignore: unused_field
   final String name;
-  // ignore: unused_field
   final String uploader;
-  // ignore: unused_field
   final DateTime uploadTime;
-  // ignore: unused_field
   final int id;
 
   const UserFile(this.name, this.uploader, this.uploadTime, this.id);
