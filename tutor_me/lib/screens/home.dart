@@ -31,14 +31,50 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: mainTheme.primaryColor,
       body: _uType == UserType.Tutee
           ? BlocProvider<TaskBloc>(
-              create: (context) => TaskBloc(_userID, _userID)..add(RefreshTask(null)),
+              create: (context) =>
+                  TaskBloc(_userID, _userID)..add(RefreshTask(null)),
               child: TaskViewer(_uType, null, _userID),
             )
           : BlocProvider<tutees.TuteeBloc>(
-              create: (context) => tutees.TuteeBloc(_userID)..add(tutees.RefreshTutee()),
+              create: (context) =>
+                  tutees.TuteeBloc(_userID)..add(tutees.RefreshTutee()),
               child: TuteeViewer(),
             ),
-      drawer: Drawer(),
+      drawer: Drawer(
+        child: ListView(
+          children: [
+            DrawerHeader(
+              child: Center(
+                  child: Text(
+                "TUTOR ME",
+                style: textStyle.copyWith(fontSize: 45),
+                textAlign: TextAlign.center,
+              )),
+              decoration: BoxDecoration(
+                color: mainTheme.primaryColor,
+              ),
+            ),
+            ListTile(
+              title: Text(
+                "Chats",
+                style: textStyle.copyWith(color: mainTheme.primaryColor),
+                textScaleFactor: 0.8,
+                textAlign: TextAlign.center,
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              title: Text(
+                "Calendar",
+                style: textStyle.copyWith(color: mainTheme.primaryColor),
+                textScaleFactor: 0.8,
+                textAlign: TextAlign.center,
+              ),
+              onTap: () {},
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
