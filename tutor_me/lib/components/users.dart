@@ -13,21 +13,22 @@ class TuteeCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final TaskBloc _calendarBloc = BlocProvider.of(context);
+    final _overdue = !_task.end.isAfter(DateTime.now());
     return Card(
       child: ListTile(
         title: Text(_task.content),
-        subtitle: Text("${_formatTime()}"),
+        subtitle: !_overdue ? Text("${_formatTime()}") : null,
         onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => FileScreen(_task.id.toString()))),
+                builder: (context) => FileScreen(_task.content, _task.id.toString()))),
         trailing: IconButton(
           onPressed: () {
-            if (!_task.done && _task.end.isAfter(DateTime.now())) {
+            if (!_task.done && !_overdue) {
               _calendarBloc.add(DoneTask(_task.id!.toInt()));
             }
           },
-          icon: _task.end.isAfter(DateTime.now())
+          icon: !_overdue
               ? Icon(
                   _task.done
                       ? Icons.check_box_outlined
@@ -82,7 +83,7 @@ class TutorCard extends StatelessWidget {
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => FileScreen(_task.id.toString()))),
+              builder: (context) => FileScreen(_task.content, _task.id.toString()))),
       trailing: IconButton(
           onPressed: () => _calendarBloc.add(RemoveTask(_task.id!, _tuteeName)),
           icon: Icon(Icons.cancel_outlined, color: Colors.red)),

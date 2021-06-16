@@ -10,26 +10,25 @@ class TuteeScreen extends StatelessWidget {
   final String _userID;
   final String _tuteeID;
 
-  const TuteeScreen(this._userID, this._tuteeID, this._name, {Key? key}) : super(key: key);
+  const TuteeScreen(this._userID, this._tuteeID, this._name, {Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _name,
-          style: textStyle.copyWith(color: mainTheme.primaryColor),
-          
+        appBar: AppBar(
+          title: Text(
+            _name,
+            style: textStyle.copyWith(color: mainTheme.primaryColor),
+          ),
+          backgroundColor: mainTheme.accentColor,
+          foregroundColor: mainTheme.primaryColor,
         ),
-        backgroundColor: mainTheme.accentColor,
-        foregroundColor: mainTheme.primaryColor,
-      ),
-      backgroundColor: mainTheme.primaryColor,
-      body: BlocProvider<TaskBloc>(
-        create: (context) => TaskBloc(_userID, _tuteeID)..add(RefreshTask(_name)),
-        child: TaskViewer(UserType.Tutor, _name, _userID),
-      )
-    );
+        backgroundColor: mainTheme.primaryColor,
+        body: BlocProvider<TaskBloc>(
+          create: (context) =>
+              TaskBloc(_userID, _tuteeID)..add(RefreshTask(_name)),
+          child: TaskViewer(UserType.Tutor, _name, _userID),
+        ));
   }
 }
-

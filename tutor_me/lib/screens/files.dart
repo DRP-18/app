@@ -1,40 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/files.dart';
+import 'package:tutor_me/components/file_viewer.dart';
+import 'package:tutor_me/theme/theme.dart';
 
 class FileScreen extends StatelessWidget {
   final String _taskID;
+  final String _name;
 
-  const FileScreen(this._taskID, {Key? key}) : super(key: key);
+  const FileScreen(this._name, this._taskID, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final FileBloc _fileBloc = FileBloc(_taskID);
-    return Container(
-      child: BlocBuilder(
-        bloc: _fileBloc,
-        builder: (context, List<File> state) {
-          return Column(children: [
-            Expanded(
-              child: RefreshIndicator(
-                child: ListView(
-                  children: [Card(
-                    color: Colors.brown,
-                    child: Text("hello"),
-                    )],
-                ),
-                onRefresh: () {
-                  //On the off chance that someone ever looks at this again, please note that this is not the standard way
-                  //But also the standard way is another hack
-                  return () async {
-                    var state = await RefreshFile().handle([_taskID]);
-                    _fileBloc.emit(state);
-                  }();
-                },
-              ),
-            ),
-          ]);
-        },
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          _name,
+          style: textStyle.copyWith(color: mainTheme.primaryColor),
+        ),
+        backgroundColor: mainTheme.accentColor,
+        foregroundColor: mainTheme.primaryColor,
+      ),
+      backgroundColor: mainTheme.primaryColor,
+      body: BlocProvider<FileBloc>(
+        create: (context) => FileBloc(_taskID)..add(RefreshFile()),
+        child: FileViewer(_taskID),
       ),
     );
   }

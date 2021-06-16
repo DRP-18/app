@@ -17,15 +17,15 @@ class FileBloc extends DataBloc<File> {
 
 class File {
   // ignore: unused_field
-  final String _name;
+  final String name;
   // ignore: unused_field
-  final String _uploader;
+  final String uploader;
   // ignore: unused_field
-  final DateTime _uploadTime;
+  final DateTime uploadTime;
   // ignore: unused_field
-  final int _id;
+  final int id;
 
-  const File(this._name, this._uploader, this._uploadTime, this._id);
+  const File(this.name, this.uploader, this.uploadTime, this.id);
 
   static File fromJson(Map obj) {
     final _format = DateFormat("yyyy-MM-ddThh:mm");
