@@ -1,6 +1,7 @@
 import 'dart:isolate';
 import 'dart:ui';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -11,12 +12,13 @@ import 'package:tutor_me/components/viewer.dart';
 import 'package:tutor_me/theme/theme.dart';
 import 'package:path_provider/path_provider.dart';
 
-class FileViewer extends RefreshableViewer<File, FileBloc> {
+class FileViewer extends RefreshableViewer<UserFile, FileBloc> {
   final String _taskID;
+  final String _userID;
   final DateFormat _format = DateFormat("HH:mm dd MMM");
   final _url = "https://tutor-drp.herokuapp.com/file/";
 
-  FileViewer(this._taskID);
+  FileViewer(this._taskID, this._userID);
 
   @override
   List<Widget> children(BuildContext context) {
@@ -24,13 +26,19 @@ class FileViewer extends RefreshableViewer<File, FileBloc> {
     return [
       DummyDownloader(),
       IconButton(
-          onPressed: () {},
+          onPressed: () async {
+            FilePickerResult? result = await FilePicker.platform.pickFiles();
+
+          if(result != null) {
+            _fileBloc.add(UploadFile(result.files.single));
+          }
+          },
           icon: Icon(Icons.upload_file, color: mainTheme.accentColor)),
     ];
   }
 
   @override
-  List<Widget> process(List<File> state, BuildContext context) {
+  List<Widget> process(List<UserFile> state, BuildContext context) {
     return state
         .map((file) => Card(
                 child: ListTile(
@@ -47,7 +55,7 @@ class FileViewer extends RefreshableViewer<File, FileBloc> {
         .toList();
   }
 
-  Future<void> _downloadFile(File file) async {
+  Future<void> _downloadFile(UserFile file) async {
     final status = await Permission.storage.request();
 
     final url = _url + """${file.id}/${file.name.replaceAll(" ", "%20")}""";
@@ -68,8 +76,8 @@ class FileViewer extends RefreshableViewer<File, FileBloc> {
   }
 
   @override
-  Future<List<File>> refresher(BuildContext context) async {
-    return await RefreshFile().handle([_taskID]);
+  Future<List<UserFile>> refresher(BuildContext context) async {
+    return await RefreshFile().handle([_taskID, _userID]);
   }
 }
 
@@ -89,12 +97,7 @@ class _DummyDownloaderState extends State<DummyDownloader> {
 
     IsolateNameServer.registerPortWithName(
         _port.sendPort, 'downloader_send_port');
-    _port.listen((dynamic data) {
-      String id = data[0];
-      DownloadTaskStatus status = data[1];
-      int progress = data[2];
-      setState(() {});
-    });
+    _port.listen((dynamic data) => setState(() {}));
 
     FlutterDownloader.registerCallback(downloadCallback);
   }

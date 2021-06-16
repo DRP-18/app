@@ -12,7 +12,7 @@ class TuteeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TaskBloc _calendarBloc = BlocProvider.of(context);
+    final TaskBloc _taskBloc = BlocProvider.of(context);
     final _overdue = !_task.end.isAfter(DateTime.now());
     return Card(
       child: ListTile(
@@ -21,11 +21,11 @@ class TuteeCard extends StatelessWidget {
         onTap: () => Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => FileScreen(_task.content, _task.id.toString()))),
+                builder: (context) => FileScreen(_task.content, _task.id.toString(), _taskBloc.userID))),
         trailing: IconButton(
           onPressed: () {
             if (!_task.done && !_overdue) {
-              _calendarBloc.add(DoneTask(_task.id!.toInt()));
+              _taskBloc.add(DoneTask(_task.id!.toInt()));
             }
           },
           icon: !_overdue
@@ -76,16 +76,16 @@ class TutorCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TaskBloc _calendarBloc = BlocProvider.of(context);
+    final TaskBloc _taskBloc = BlocProvider.of(context);
     return Card(
         child: ListTile(
       title: Text(_task.content),
       onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => FileScreen(_task.content, _task.id.toString()))),
+              builder: (context) => FileScreen(_task.content, _task.id.toString(), _taskBloc.userID))),
       trailing: IconButton(
-          onPressed: () => _calendarBloc.add(RemoveTask(_task.id!, _tuteeName)),
+          onPressed: () => _taskBloc.add(RemoveTask(_task.id!, _tuteeName)),
           icon: Icon(Icons.cancel_outlined, color: Colors.red)),
     ));
   }
