@@ -10,7 +10,7 @@ abstract class RefreshableViewer<E, T extends DataBloc<E>> extends StatelessWidg
 
   Future<List<E>> refresher(BuildContext context);
 
-  List<StatelessWidget> process(List<E> state);
+  List<Widget> process(List<E> state, BuildContext context);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ abstract class RefreshableViewer<E, T extends DataBloc<E>> extends StatelessWidg
               Expanded(
                 child: RefreshIndicator(
                   child: ListView(
-                    children: process(state),
+                    children: process(state, context),
                   ),
                   onRefresh: () {
                     //On the off chance that someone ever looks at this again, please note that this is not the standard way

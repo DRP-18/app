@@ -21,7 +21,7 @@ class TuteeCard extends StatelessWidget {
         trailing: IconButton(
           onPressed: () {
             if (!_task.done) {
-              _calendarBloc.add(Done(_task.id!.toInt()));
+              _calendarBloc.add(DoneTask(_task.id!.toInt()));
             }
           },
           icon: Icon(
@@ -73,7 +73,7 @@ class TutorCard extends StatelessWidget {
       title: Text(_task.content),
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FileScreen(_task.id.toString()))),
       trailing: IconButton(
-          onPressed: () => _calendarBloc.add(Remove(_task.id!, _tuteeName)),
+          onPressed: () => _calendarBloc.add(RemoveTask(_task.id!, _tuteeName)),
           icon: Icon(Icons.cancel_outlined,
           color: Colors.red)),
     ));

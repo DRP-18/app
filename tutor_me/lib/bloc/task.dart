@@ -124,7 +124,7 @@ class RemoveTask extends DataEvent<Task> {
 
 class AddTask extends DataEvent<Task> {
   final _format = DateFormat("yyyy-MM-ddThh:mm");
-  final Uri url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
+  final url = Uri.parse("https://tutor-drp.herokuapp.com/addtask");
 
   late Task _task;
   late String _tuteeName;

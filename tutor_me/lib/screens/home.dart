@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/bloc/tutees.dart' as tutees;
-import 'package:tutor_me/components/event_viewer.dart';
+import 'package:tutor_me/components/task_viewer.dart';
 import 'package:tutor_me/components/tutee_viewer.dart';
 import 'package:tutor_me/components/users.dart';
 import 'package:tutor_me/theme/theme.dart';
@@ -31,11 +31,11 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: mainTheme.primaryColor,
       body: _uType == UserType.Tutee
           ? BlocProvider<TaskBloc>(
-              create: (context) => TaskBloc(_userID, _userID)..add(Refresh(null)),
-              child: EventViewer(_uType, null, _userID),
+              create: (context) => TaskBloc(_userID, _userID)..add(RefreshTask(null)),
+              child: TaskViewer(_uType, null, _userID),
             )
           : BlocProvider<tutees.TuteeBloc>(
-              create: (context) => tutees.TuteeBloc(_userID)..add(tutees.Refresh()),
+              create: (context) => tutees.TuteeBloc(_userID)..add(tutees.RefreshTutee()),
               child: TuteeViewer(),
             ),
       drawer: Drawer(),

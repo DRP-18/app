@@ -11,7 +11,7 @@ class TaskViewer extends RefreshableViewer<Task, TaskBloc> {
   const TaskViewer(this._uType, this._tuteeName, this._userID);
 
   @override
-  List<StatelessWidget> process(List<Task> state) => state
+  List<Widget> process(List<Task> state, BuildContext _) => state
       .where((e) => e.end.isAfter(DateTime.now()))
       .map((e) =>
           _uType == UserType.Tutee ? TuteeCard(e) : TutorCard(e, _tuteeName!))

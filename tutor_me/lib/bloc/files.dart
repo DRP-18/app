@@ -16,9 +16,13 @@ class FileBloc extends DataBloc<File> {
 }
 
 class File {
+  // ignore: unused_field
   final String _name;
+  // ignore: unused_field
   final String _uploader;
+  // ignore: unused_field
   final DateTime _uploadTime;
+  // ignore: unused_field
   final int _id;
 
   const File(this._name, this._uploader, this._uploadTime, this._id);
