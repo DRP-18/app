@@ -18,7 +18,7 @@ class TuteeViewer extends RefreshableViewer<Tutee, TuteeBloc> {
                 return AddTuteeDialog(_tuteeBloc);
               });
         },
-        icon: Icon(Icons.person_add),
+        icon: Icon(Icons.person_add, color: mainTheme.accentColor),
       )
     ];
   }
@@ -38,7 +38,7 @@ class TuteeViewer extends RefreshableViewer<Tutee, TuteeBloc> {
                             builder: (context) => TuteeScreen(
                                 _tuteeBloc.userID, e.id.toString(), e.name)));
                   },
-                  icon: Icon(Icons.person)),
+                  icon: Icon(Icons.person, color: mainTheme.primaryColor)),
             )))
         .toList();
   }

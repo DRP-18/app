@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/components/users.dart';
 import 'package:tutor_me/components/viewer.dart';
+import 'package:tutor_me/theme/theme.dart';
 
 class TaskViewer extends RefreshableViewer<Task, TaskBloc> {
   final UserType _uType;
@@ -28,14 +29,14 @@ class TaskViewer extends RefreshableViewer<Task, TaskBloc> {
     final TaskBloc _taskBloc = BlocProvider.of(context);
     return [
       if (_uType == UserType.Tutor)
-        ElevatedButton(
-            onPressed: () {
-              _taskBloc.add(AddTask(
-                  Task(DateTime.now(), DateTime.now().add(Duration(days: 1)),
-                      "Homework 1", false),
-                  _tuteeName!));
-            },
-            child: Text("Add")),
+        IconButton(
+          icon: Icon(Icons.add_task, color: mainTheme.accentColor),
+          onPressed: () {
+          _taskBloc.add(AddTask(
+              Task(DateTime.now(), DateTime.now().add(Duration(days: 1)),
+                  "Homework 1", false),
+              _tuteeName!));
+        }),
     ];
   }
 }
