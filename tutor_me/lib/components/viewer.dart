@@ -4,13 +4,13 @@ import 'package:tutor_me/bloc/data_bloc.dart';
 
 abstract class RefreshableViewer<E, T extends DataBloc<E>> extends StatelessWidget {  
 
-  final List<Widget> _children;
+  const RefreshableViewer({ Key? key }) : super(key: key);
 
-  const RefreshableViewer(this._children, { Key? key }) : super(key: key);
+  List<Widget> children(BuildContext context);
 
-  Future<List<E>> _refresher();
+  Future<List<E>> refresher(BuildContext context);
 
-  StatelessWidget _map(E state);
+  List<StatelessWidget> process(List<E> state);
 
   @override
   Widget build(BuildContext context) {
@@ -20,24 +20,24 @@ abstract class RefreshableViewer<E, T extends DataBloc<E>> extends StatelessWidg
         bloc: _bloc,
         builder: (context, List<E> state) {
           return Column(
-            // ignore: unnecessary_cast
-            children: ([
+            children: [
               Expanded(
                 child: RefreshIndicator(
                   child: ListView(
-                    children: state.map((e) => _map(e)).toList(),
+                    children: process(state),
                   ),
                   onRefresh: () {
                     //On the off chance that someone ever looks at this again, please note that this is not the standard way
                     //But also the standard way is another hack
                     return () async {
-                      var state = await _refresher();
+                      var state = await refresher(context);
                       _bloc.emit(state);
                     }();
                   },
                 ),
               ),
-            ] as List<Widget>) + _children,
+            // ignore: unnecessary_cast
+            ].map((e) => e as Widget).toList() + children(context),
           );
         },
       ),
