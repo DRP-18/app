@@ -35,7 +35,7 @@ class File {
 }
 
 class RefreshFile extends Refresh<File> {
-  final _url = "https://tutor-drp.herokuapp.com/task/";
+  final _url = "https://tutor-drp.herokuapp.com/taskfiles?task_id=";
 
   RefreshFile() : super();
 
@@ -43,7 +43,9 @@ class RefreshFile extends Refresh<File> {
   Future<http.Response> request(List<String> fields) {
     final _taskID = fields[0];
     final url = Uri.parse(_url + _taskID);
-    return http.get(url);
+    return http.get(url, headers: {
+      "Cookie": "user_id=1",
+    });
   }
 
   @override

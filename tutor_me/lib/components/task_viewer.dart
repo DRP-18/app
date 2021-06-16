@@ -13,7 +13,6 @@ class TaskViewer extends RefreshableViewer<Task, TaskBloc> {
 
   @override
   List<Widget> process(List<Task> state, BuildContext _) => state
-      .where((e) => e.end.isAfter(DateTime.now()))
       .map((e) =>
           _uType == UserType.Tutee ? TuteeCard(e) : TutorCard(e, _tuteeName!))
       .toList();

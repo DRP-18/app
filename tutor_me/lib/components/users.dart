@@ -17,18 +17,26 @@ class TuteeCard extends StatelessWidget {
       child: ListTile(
         title: Text(_task.content),
         subtitle: Text("${_formatTime()}"),
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FileScreen(_task.id.toString()))),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => FileScreen(_task.id.toString()))),
         trailing: IconButton(
           onPressed: () {
-            if (!_task.done) {
+            if (!_task.done && _task.end.isAfter(DateTime.now())) {
               _calendarBloc.add(DoneTask(_task.id!.toInt()));
             }
           },
-          icon: Icon(
-              _task.done
-                  ? Icons.check_box_outlined
-                  : Icons.check_box_outline_blank_rounded,
-              color: _task.done ? Colors.green : Colors.red),
+          icon: _task.end.isAfter(DateTime.now())
+              ? Icon(
+                  _task.done
+                      ? Icons.check_box_outlined
+                      : Icons.check_box_outline_blank_rounded,
+                  color: _task.done ? Colors.green : Colors.red)
+              : Icon(
+                  Icons.access_alarms_outlined,
+                  color: Colors.red,
+                ),
         ),
       ),
     );
@@ -71,11 +79,13 @@ class TutorCard extends StatelessWidget {
     return Card(
         child: ListTile(
       title: Text(_task.content),
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FileScreen(_task.id.toString()))),
+      onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => FileScreen(_task.id.toString()))),
       trailing: IconButton(
           onPressed: () => _calendarBloc.add(RemoveTask(_task.id!, _tuteeName)),
-          icon: Icon(Icons.cancel_outlined,
-          color: Colors.red)),
+          icon: Icon(Icons.cancel_outlined, color: Colors.red)),
     ));
   }
 }
