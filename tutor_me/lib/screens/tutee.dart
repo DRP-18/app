@@ -21,6 +21,11 @@ class TuteeScreen extends StatelessWidget {
             _name,
             style: textStyle.copyWith(color: mainTheme.primaryColor),
           ),
+          leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: mainTheme.primaryColor,), 
+          onPressed: () {
+            Navigator.pop(context);
+          }),
           backgroundColor: mainTheme.accentColor,
           foregroundColor: mainTheme.primaryColor,
         ),

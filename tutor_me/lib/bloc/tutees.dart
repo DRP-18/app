@@ -16,6 +16,10 @@ class Tutee {
   final String name;
   final int id;
   const Tutee(this.name, this.id);
+
+  bool operator ==(Object other) => identical(this, other) || (other as Tutee).id == id;
+
+  int get hashCode => id.hashCode;
 }
 
 class RefreshTutee extends Refresh<Tutee> {

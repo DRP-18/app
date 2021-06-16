@@ -27,6 +27,7 @@ class TuteeViewer extends RefreshableViewer<Tutee, TuteeBloc> {
   List<Widget> process(List<Tutee> state, BuildContext context) {
     final TuteeBloc _tuteeBloc = BlocProvider.of(context);
     return state
+        .toSet()
         .map((e) => Card(
                 child: ListTile(
               title: Text(e.name),

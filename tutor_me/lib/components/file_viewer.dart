@@ -27,6 +27,10 @@ class FileViewer extends RefreshableViewer<File, FileBloc> {
       child: ListTile(
         title: Text(e.name),
         subtitle: Text("${e.uploader} at ${_format.format(e.uploadTime)}"),
+        trailing: IconButton(
+          onPressed: () {},
+          icon: Icon(Icons.download, color: mainTheme.primaryColor),
+        ),
       )
     )).toList();
   }
