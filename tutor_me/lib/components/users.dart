@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/task.dart';
+import 'package:tutor_me/screens/files.dart';
 
 enum UserType { Tutee, Tutor }
 
@@ -16,6 +17,7 @@ class TuteeCard extends StatelessWidget {
       child: ListTile(
         title: Text(_task.content),
         subtitle: Text("${_formatTime()}"),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FileScreen(_task.id.toString()))),
         trailing: IconButton(
           onPressed: () {
             if (!_task.done) {
@@ -69,9 +71,11 @@ class TutorCard extends StatelessWidget {
     return Card(
         child: ListTile(
       title: Text(_task.content),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FileScreen(_task.id.toString()))),
       trailing: IconButton(
           onPressed: () => _calendarBloc.add(Remove(_task.id!, _tuteeName)),
-          icon: Icon(Icons.cancel_outlined)),
+          icon: Icon(Icons.cancel_outlined,
+          color: Colors.red)),
     ));
   }
 }
