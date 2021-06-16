@@ -17,7 +17,7 @@ class Tutee {
   final int id;
   const Tutee(this.name, this.id);
 
-  bool operator ==(Object other) => identical(this, other) || (other as Tutee).id == id;
+  bool operator ==(Object other) => identical(this, other);
 
   int get hashCode => id.hashCode;
 }

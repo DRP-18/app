@@ -37,6 +37,8 @@ dependencies:
   html: ^0.15.0
   intl: ^0.17.0
   tuple: ^2.0.0
+  flutter_downloader: ^1.6.1
+  permission_handler: ^8.1.1
 
 dev_dependencies:
   flutter_test:
