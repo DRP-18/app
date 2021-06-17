@@ -11,8 +11,9 @@ import 'package:tutor_me/theme/theme.dart';
 class HomeScreen extends StatelessWidget {
   final String _userID;
   final UserType _uType;
+  final String _name;
 
-  const HomeScreen(this._userID, this._uType, {Key? key}) : super(key: key);
+  const HomeScreen(this._userID, this._uType, this._name, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                   tutees.TuteeBloc(_userID)..add(tutees.RefreshTutee()),
               child: TuteeViewer(),
             ),
-      drawer: MainDrawer(_userID),
+      drawer: MainDrawer(_userID, _name),
     );
   }
 }

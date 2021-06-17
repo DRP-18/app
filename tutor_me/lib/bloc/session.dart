@@ -62,7 +62,13 @@ class RemoveSession extends DataEvent<Session> {
 
   @override
   Future<List<Session>> handle(List<String> fields) async {
-    await http.post(url, body: _session.toJson());
+    final userID = fields[0];
+    var resp = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: _session.toJson(userID));
+    print(resp);
     return RefreshSessions().handle(fields);
   }
 }

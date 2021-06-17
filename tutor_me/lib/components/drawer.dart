@@ -6,8 +6,11 @@ import 'package:tutor_me/theme/theme.dart';
 
 class MainDrawer extends StatelessWidget {
   final String _userID;
+  final String _name;
+
   const MainDrawer(
-    this._userID, {
+    this._userID,
+    this._name, {
     Key? key,
   }) : super(key: key);
 
@@ -48,8 +51,9 @@ class MainDrawer extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                       builder: (context) => BlocProvider<SessionBloc>(
-                          create: (context) => SessionBloc(_userID)..add(RefreshSessions()),
-                          child: CalendarScreen())));
+                          create: (context) =>
+                              SessionBloc(_userID)..add(RefreshSessions()),
+                          child: CalendarScreen(_name))));
             },
           ),
         ],

@@ -11,10 +11,13 @@ class SessionBooker extends StatefulWidget {
   final DateTime _start;
   final SessionBloc _bloc;
 
-  const SessionBooker(this._name, this._userID, this._start, this._bloc, {Key? key}) : super(key: key);
+  const SessionBooker(this._name, this._userID, this._start, this._bloc,
+      {Key? key})
+      : super(key: key);
 
   @override
-  _SessionBookerState createState() => _SessionBookerState(_name, _userID, _start, _bloc);
+  _SessionBookerState createState() =>
+      _SessionBookerState(_name, _userID, _start, _bloc);
 }
 
 class _SessionBookerState extends State<SessionBooker> {
@@ -68,7 +71,7 @@ class _SessionBookerState extends State<SessionBooker> {
                     dropdownValue = newValue!;
                   });
                 },
-                items: (snapshot.data ?? [])
+                items: snapshot.data!
                     .map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
@@ -78,21 +81,22 @@ class _SessionBookerState extends State<SessionBooker> {
               ),
               SizedBox(height: 30),
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: () async {
                       Navigator.pop(context);
                     },
                     child: Text("Cancel"),
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(mainTheme.primaryColor),
-                      foregroundColor:
                           MaterialStateProperty.all(mainTheme.accentColor),
+                      foregroundColor:
+                          MaterialStateProperty.all(mainTheme.primaryColor),
                     ),
                   ),
                   SizedBox(width: 80),
-                  ElevatedButton(
+                  OutlinedButton(
                     onPressed: () {
                       _bloc.add(AddSession(Session(
                         name,
@@ -105,9 +109,9 @@ class _SessionBookerState extends State<SessionBooker> {
                     child: Text("Book"),
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all(mainTheme.primaryColor),
-                      foregroundColor:
                           MaterialStateProperty.all(mainTheme.accentColor),
+                      foregroundColor:
+                          MaterialStateProperty.all(mainTheme.primaryColor),
                     ),
                   ),
                 ],
@@ -132,5 +136,49 @@ class _SessionBookerState extends State<SessionBooker> {
       dropdownValue = names[0];
     });
     return names;
+  }
+}
+
+class SessionRemover extends StatelessWidget {
+  final SessionBloc _bloc;
+  final String _userID;
+  final DateTime _start;
+  final DateTime _end;
+
+  const SessionRemover(this._userID, this._start, this._end, this._bloc,
+      {Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(
+          "Are you sure you want to delete this session?\n\nThink of the children.\n\nAnakin."),
+      actions: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            OutlinedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "NO",
+                  style: TextStyle(color: Colors.green),
+                )),
+            OutlinedButton(
+                onPressed: () {
+                  _bloc.add(RemoveSession(
+                      Session("", "", _start, _end)));
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  "YES",
+                  style: TextStyle(color: Colors.red),
+                )),
+          ],
+        ),
+      ],
+    );
   }
 }

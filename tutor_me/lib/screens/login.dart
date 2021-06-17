@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
           context,
           MaterialPageRoute(
               builder: (context) => HomeScreen(userId,
-                  userType == "tutee" ? UserType.Tutee : UserType.Tutor)));
+                  userType == "tutee" ? UserType.Tutee : UserType.Tutor, _username)));
     }
   }
 

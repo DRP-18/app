@@ -6,7 +6,9 @@ import 'package:tutor_me/components/book_session.dart';
 import 'package:tutor_me/theme/theme.dart';
 
 class CalendarScreen extends StatelessWidget {
-  const CalendarScreen({Key? key}) : super(key: key);
+  final String _name;
+
+  const CalendarScreen(this._name, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +43,18 @@ class CalendarScreen extends StatelessWidget {
             onLongPress: (CalendarLongPressDetails details) {
               showDialog(
                   context: context,
-                  builder: (context) => SessionBooker(
-                      "Jayme", _sessionBloc.userID, details.date!, _sessionBloc));
+                  builder: (context) => details.appointments == null
+                      ? SessionBooker(_name, _sessionBloc.userID, details.date!,
+                          _sessionBloc)
+                      : () {
+                          final Appointment _appointment =
+                              details.appointments![0];
+                          return SessionRemover(
+                              _sessionBloc.userID,
+                              _appointment.startTime,
+                              _appointment.endTime,
+                              _sessionBloc);
+                        }());
             },
           ),
         ),
