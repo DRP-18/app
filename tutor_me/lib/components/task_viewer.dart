@@ -55,7 +55,6 @@ class TaskViewer extends RefreshableViewer<Task, TaskBloc> {
                 return;
               }
 
-
               var dueDate = DateTime(tempDueDate.year, tempDueDate.month,
                   tempDueDate.day, tempDueTime.hour, tempDueTime.minute);
 

@@ -41,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                   tutees.TuteeBloc(_userID)..add(tutees.RefreshTutee()),
               child: TuteeViewer(),
             ),
-      drawer: MainDrawer(),
+      drawer: MainDrawer(_userID),
     );
   }
 }

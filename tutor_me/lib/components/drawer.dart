@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tutor_me/bloc/session.dart';
 import 'package:tutor_me/screens/calendar.dart';
 import 'package:tutor_me/theme/theme.dart';
 
 class MainDrawer extends StatelessWidget {
-  const MainDrawer({
+  final String _userID;
+  const MainDrawer(
+    this._userID, {
     Key? key,
   }) : super(key: key);
 
@@ -40,7 +44,12 @@ class MainDrawer extends StatelessWidget {
               textAlign: TextAlign.center,
             ),
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) => CalendarScreen()));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => BlocProvider<SessionBloc>(
+                          create: (context) => SessionBloc(_userID)..add(RefreshSessions()),
+                          child: CalendarScreen())));
             },
           ),
         ],

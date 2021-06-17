@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'data_bloc.dart';
 
 class SessionBloc extends DataBloc<Session> {
-  SessionBloc(List<String> fields) : super(fields);
+  final String userID;
+
+  SessionBloc(this.userID) : super([userID]);
 
   @override
   Stream<List<Session>> mapEventToState(DataEvent<Session> event) async* {
@@ -12,19 +17,20 @@ class SessionBloc extends DataBloc<Session> {
 
 class Session {
   final String tutor;
-  final List<String> tutees;
+  final String tutees;
   final DateTime start;
-  final Duration duration;
+  final DateTime end;
 
-  const Session(this.tutor, this.tutees, this.start, this.duration);
+  const Session(this.tutor, this.tutees, this.start, this.end);
 
   static Session fromJson(Map obj) {
-    return Session(
-        obj["tutor"]!, obj["tutees"]!, obj["start"]!, obj["duration"]!);
+    final _format = DateFormat("EEE MMM dd yyyy HH:mm:ss");
+    return Session(obj["tutor"]!, obj["tutees"]!,
+        _format.parse(obj["startTime"]!), _format.parse(obj["endTime"]!));
   }
 
   String toJson() {
-    return """{"tutor": "$tutor", "tutees": $tutees, "date": ${start.toUtc()}, "duration": ${duration.toString()}}""";
+    return """{"tutor": "$tutor", "tutees": "$tutees", "startTime": "${start.toUtc()}", "endTime": "${end.toUtc()}"}""";
   }
 }
 
@@ -61,9 +67,15 @@ class RefreshSessions extends Refresh<Session> {
 
   @override
   Future<http.Response> request(List<String> fields) {
-    return http.post(url, body: {
-      "tutor": fields[0],
-    });
+    print(jsonEncode(<String, String>{"message": "1"}));
+    return http.post(url,
+        headers: {
+          "Cookie": "user_id=1; user_type=tutor",
+          "Content-Type": "application/json"
+        },
+        body: jsonEncode({
+          "message": "1",
+        }));
   }
 
   @override
