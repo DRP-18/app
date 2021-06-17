@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/bloc/tutees.dart' as tutees;
+import 'package:tutor_me/components/drawer.dart';
 import 'package:tutor_me/components/task_viewer.dart';
 import 'package:tutor_me/components/tutee_viewer.dart';
 import 'package:tutor_me/components/users.dart';
@@ -40,41 +41,7 @@ class HomeScreen extends StatelessWidget {
                   tutees.TuteeBloc(_userID)..add(tutees.RefreshTutee()),
               child: TuteeViewer(),
             ),
-      drawer: Drawer(
-        child: ListView(
-          children: [
-            DrawerHeader(
-              child: Center(
-                  child: Text(
-                "TUTOR ME",
-                style: textStyle.copyWith(fontSize: 45),
-                textAlign: TextAlign.center,
-              )),
-              decoration: BoxDecoration(
-                color: mainTheme.primaryColor,
-              ),
-            ),
-            ListTile(
-              title: Text(
-                "Chats",
-                style: textStyle.copyWith(color: mainTheme.primaryColor),
-                textScaleFactor: 0.8,
-                textAlign: TextAlign.center,
-              ),
-              onTap: () {},
-            ),
-            ListTile(
-              title: Text(
-                "Calendar",
-                style: textStyle.copyWith(color: mainTheme.primaryColor),
-                textScaleFactor: 0.8,
-                textAlign: TextAlign.center,
-              ),
-              onTap: () {},
-            ),
-          ],
-        ),
-      ),
+      drawer: MainDrawer(),
     );
   }
 }

@@ -5,7 +5,6 @@ import 'package:tutor_me/bloc/task.dart';
 import 'package:tutor_me/components/users.dart';
 import 'package:tutor_me/components/viewer.dart';
 import 'package:tutor_me/theme/theme.dart';
-import 'package:prompt_dialog/prompt_dialog.dart';
 
 class TaskViewer extends RefreshableViewer<Task, TaskBloc> {
   final UserType _uType;
