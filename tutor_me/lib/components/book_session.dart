@@ -141,11 +141,11 @@ class _SessionBookerState extends State<SessionBooker> {
 
 class SessionRemover extends StatelessWidget {
   final SessionBloc _bloc;
-  final String _userID;
+  final String userID;
   final DateTime _start;
   final DateTime _end;
 
-  const SessionRemover(this._userID, this._start, this._end, this._bloc,
+  const SessionRemover(this.userID, this._start, this._end, this._bloc,
       {Key? key})
       : super(key: key);
 

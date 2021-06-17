@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tutor_me/bloc/session.dart';
 import 'package:tutor_me/screens/calendar.dart';
+import 'package:tutor_me/screens/messaging.dart';
 import 'package:tutor_me/theme/theme.dart';
 
 class MainDrawer extends StatelessWidget {
@@ -37,7 +38,12 @@ class MainDrawer extends StatelessWidget {
               textScaleFactor: 0.8,
               textAlign: TextAlign.center,
             ),
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MessagingScreenWidget(_name)));
+            },
           ),
           ListTile(
             title: Text(

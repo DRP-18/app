@@ -52,6 +52,7 @@ class Task {
   }
 
   static Task fromJson(Map obj) {
+    obj = obj["task"];
     return Task(
       DateTime.parse(obj["startTime"]!),
       DateTime.parse(obj["endTime"]!),
