@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-var mainTheme = ThemeData(
+final mainTheme = ThemeData(
   primaryColor: Colors.blueAccent[200],
-  accentColor: Colors.grey[50],
+  accentColor:  Colors.grey[50],
 );
 
 var textStyle = TextStyle(

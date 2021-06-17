@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:tutor_me/bloc/session.dart';
+import 'package:tutor_me/components/book_session.dart';
 import 'package:tutor_me/theme/theme.dart';
 
 class CalendarScreen extends StatelessWidget {
@@ -20,16 +21,16 @@ class CalendarScreen extends StatelessWidget {
       body: Container(
           child: BlocBuilder(
         bloc: _sessionBloc,
-        builder: (BuildContext context, List<Session> state) => RefreshIndicator(
-          onRefresh: () async {},
+        builder: (BuildContext context, List<Session> state) =>
+            RefreshIndicator(
+          onRefresh: () async {
+            var state = await RefreshSessions().handle([_sessionBloc.userID]);
+            _sessionBloc.emit(state);
+          },
           child: SfCalendar(
-            view: CalendarView.month,
-            dataSource: _AppointmentDataSource(state.map(_sessionToAppointment).toList()),
-            monthViewSettings: MonthViewSettings(showAgenda: true),
-            scheduleViewSettings: ScheduleViewSettings(
-              appointmentItemHeight: 70,
-              hideEmptyScheduleWeek: true,
-            ),
+            view: CalendarView.week,
+            dataSource: _AppointmentDataSource(
+                state.map(_sessionToAppointment).toList()),
             initialSelectedDate: DateTime.now(),
             todayHighlightColor: mainTheme.primaryColor,
             selectionDecoration: BoxDecoration(
@@ -37,6 +38,12 @@ class CalendarScreen extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(4)),
               shape: BoxShape.rectangle,
             ),
+            onLongPress: (CalendarLongPressDetails details) {
+              showDialog(
+                  context: context,
+                  builder: (context) => SessionBooker(
+                      "Jayme", _sessionBloc.userID, details.date!, _sessionBloc));
+            },
           ),
         ),
       )),
@@ -44,13 +51,13 @@ class CalendarScreen extends StatelessWidget {
   }
 }
 
-
 Appointment _sessionToAppointment(Session session) => Appointment(
-  startTime: session.start,
-  endTime: session.end,
-  subject: "${session.tutor}, ${session.tutees}",
-  color: Colors.green,
-);
+      startTime: session.start,
+      endTime: session.end,
+      subject: "${session.tutor}, ${session.tutees}",
+      color: Colors.green,
+    );
+
 class _AppointmentDataSource extends CalendarDataSource {
   _AppointmentDataSource(List<Appointment> source) {
     appointments = source;

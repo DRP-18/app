@@ -29,8 +29,9 @@ class Session {
         _format.parse(obj["startTime"]!), _format.parse(obj["endTime"]!));
   }
 
-  String toJson() {
-    return """{"tutor": "$tutor", "tutees": "$tutees", "startTime": "${start.toUtc()}", "endTime": "${end.toUtc()}"}""";
+  String toJson(String userID) {
+    final _format = DateFormat("yyyy-MM-dd'T'HH:mm");
+    return """{"tutor": "$userID", "tutees": "$tutees", "startTime": "${_format.format(start)}", "endTime": "${_format.format(end)}"}""";
   }
 }
 
@@ -42,7 +43,13 @@ class AddSession extends DataEvent<Session> {
 
   @override
   Future<List<Session>> handle(List<String> fields) async {
-    await http.post(url, body: _session.toJson());
+    final userID = fields[0];
+    var resp = await http.post(url,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: _session.toJson(userID));
+    print(resp);
     return RefreshSessions().handle(fields);
   }
 }
@@ -67,14 +74,15 @@ class RefreshSessions extends Refresh<Session> {
 
   @override
   Future<http.Response> request(List<String> fields) {
+    final String userID = fields[0];
     print(jsonEncode(<String, String>{"message": "1"}));
     return http.post(url,
         headers: {
-          "Cookie": "user_id=1; user_type=tutor",
+          "Cookie": "user_id=$userID; user_type=tutor",
           "Content-Type": "application/json"
         },
         body: jsonEncode({
-          "message": "1",
+          "message": "$userID",
         }));
   }
 

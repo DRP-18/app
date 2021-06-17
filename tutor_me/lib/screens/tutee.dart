@@ -5,6 +5,7 @@ import 'package:tutor_me/components/task_viewer.dart';
 import 'package:tutor_me/components/users.dart';
 import 'package:tutor_me/theme/theme.dart';
 
+//This screen shows the tasks for a particular tutee
 class TuteeScreen extends StatelessWidget {
   final String _name;
   final String _userID;
